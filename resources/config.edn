@@ -1,0 +1,33 @@
+{:webserver {:port            #or [#env API_PORT 8085]
+             :cookie-name     "starcity-session"
+             :secure-sessions #profile {:prod    true
+                                        :default false}}
+
+ :datomic {:partition :db.part/starcity
+           :uri       #or [#env DATOMIC_URI
+                           ^:ref [:secrets :datomic :uri]
+                           "datomic:mem://localhost:4334/starcity"]}
+
+ :root-domain #profile {:dev   "http://localhost:8080"
+                        :stage "https://staging.joinstarcity.com"
+                        :prod  "https://joinstarcity.com"}
+
+ :log {:level    #profile {:dev     :trace
+                           :default :info}
+       :appender #profile {:dev     :spit
+                           :default :rolling}
+       :file     #profile {:dev     "logs/server.log"
+                           :default "/var/log/api/server.log"}}
+
+
+ :mailgun {:domain  "sandboxeec004e4d33845edaef9b962843713a7.mailgun.org"
+           :sender  "Mailgun Sandbox <postmaster@sandboxeec004e4d33845edaef9b962843713a7.mailgun.org>"
+           :api-key ^:ref [:secrets :mailgun :api-key]}
+
+ :slack {:username "debug"}
+
+ :nrepl {:port #or [#env NREPL_PORT 7888]}
+
+ :secrets #include #env STARCITY_SECRETS
+
+ :data-dir #or [#env STARCITY_DATA_DIR "data"]}
